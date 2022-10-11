@@ -2,9 +2,10 @@ from django.shortcuts import render, redirect
 
 
 # Create your views here.
-def start(request):
-    return render(request, 'config/test.html')
+def title(request):
+    return render(request, 'config/title.html')
 
 def home(request):
-    print(request)
+    print(request.user)
+    print(request.auth)
     return render(request, 'config/home.html')
