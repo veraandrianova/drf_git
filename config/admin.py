@@ -7,8 +7,8 @@ class AdminUser(admin.ModelAdmin):
     list_display = ('username', )
 
 
-@admin.register(models.SocialLink)
-class AdmimnSocialLink(admin.ModelAdmin):
+@admin.register(models.SocialUserLink)
+class AdmimnSocialUserLink(admin.ModelAdmin):
     list_display = ('user', 'link')
 
 @admin.register(models.UseTools)

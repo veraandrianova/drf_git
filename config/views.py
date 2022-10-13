@@ -2,27 +2,40 @@ from django.shortcuts import render, redirect
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
-
-from .models import SocialLink, Account
+from django_filters.rest_framework import DjangoFilterBackend
+from .models import SocialUserLink, Account, User
 from .permissions import IsOwnerOrReadOnly
-from .serializer import LinkCreateSerializers
-from .services import check_repo
+from .serializer import LinkCreateSerializers, UserProfileSerializers
+from .services import check_repo, get_email, UseToolFilter
 
 
 # Create your views here.
+
 def title(request):
+    print(request.POST.get('email'))
     return render(request, 'config/title.html')
 
 
 class CreateLink(viewsets.ModelViewSet):
     '''Добавление ссылки'''
-    queryset = SocialLink.objects.all()
+    queryset = SocialUserLink.objects.all()
     serializer_class = LinkCreateSerializers
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = UseToolFilter
 
     def create(self, request, *args, **kwargs):
-        print('req', request.user)
+        print('req', request.user.username)
+        # user = check_user(request.user)
         try:
-            cur_user = Account.objects.get(user_id=request.user.id)
+            user = User.objects.get(id=request.user.id)
+            print(user)
+        except User.DoesNotExist:
+            email, name = get_email(request.user)
+            user = User.objects.create(email=email, username=name)
+            accaunt = Account.objects.create(user_id=user.id, nickname_git=name, email=email)
+            print(accaunt)
+        try:
+            cur_user = Account.objects.get(user_id=user.id)
             print('cur', cur_user)
         except Account.DoesNotExist:
             print('no')
@@ -56,3 +69,16 @@ class CreateLink(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         serializer.save()
+
+
+class UserProfile(viewsets.ModelViewSet):
+    '''Добавление ссылки'''
+    queryset = User.objects.all()
+    serializer_class = UserProfileSerializers
+
+    def get_permissions(self):
+        if self.action == 'list' or 'retrieve':
+            permission_classes = [IsAuthenticatedOrReadOnly]
+        else:
+            permission_classes = [IsOwnerOrReadOnly]
+        return [permission() for permission in permission_classes]

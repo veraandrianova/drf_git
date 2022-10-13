@@ -1,10 +1,13 @@
+from django_filters import rest_framework as filters
 import requests
 
+from .models import SocialUserLink
 
 
 def get_path_upload_avatar(instance, file):
     '''Постоение пути к файлуб format: (media)/avatar/user_id/photo.jpg'''
     return f'avatar/{instance.id}/{file}'
+
 
 def get_user_repos(username):
     '''Поиск всех репозиторие пользователя'''
@@ -15,6 +18,7 @@ def get_user_repos(username):
         r = repo.get('name')
         user_repos.append(r)
     return user_repos
+
 
 def check_repo(request, cur_user):
     '''Поиск добавляемого репозитория у пользователя'''
@@ -36,6 +40,22 @@ def get_email(cur_user):
     name = info.get('author').get('name')
     return email, name
 
-# def check_user(user):
+
+# def check_user_account(user):
 #     cur_user = Account.objects.get(user_id=user.id)
 #     return cur_user
+
+# def check_user(user):
+#     cur_user = User.objects.get(id=user.id)
+#     return cur_user
+
+class CharFilterInFilter(filters.BaseInFilter, filters.CharFilter):
+    pass
+
+
+class UseToolFilter(filters.FilterSet):
+    use_tool = CharFilterInFilter(field_name='use_tool__name', lookup_expr='in')
+
+    class Meta:
+        model = SocialUserLink
+        fields = ['use_tool', ]

@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import FileExtensionValidator
 from django.db import models
 
-from .services import get_path_upload_avatar
+# from .services import get_path_upload_avatar
 
 class User(AbstractUser):
 
@@ -25,7 +25,7 @@ class UseTools(models.Model):
         return self.name
 
 
-class SocialLink(models.Model):
+class SocialUserLink(models.Model):
     '''Модель ссылок на проекты git_hub'''
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_link')
     title = models.CharField('Название', max_length=150)
