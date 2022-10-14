@@ -17,4 +17,4 @@ class AdminUseTools(admin.ModelAdmin):
 
 @admin.register(models.Account)
 class AdminAccount(admin.ModelAdmin):
-    list_display = ('user', 'nickname_git', 'email', )
+    list_display = ('user', 'nickname_git', 'email', 'url')

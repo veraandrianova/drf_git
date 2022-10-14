@@ -1,8 +1,38 @@
 from django_filters import rest_framework as filters
 import requests
 
-from .models import SocialUserLink
+from .models import SocialUserLink, Account
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from .models import User
+from allauth.socialaccount.models import SocialAccount# step 3 made this possible
 
+
+@receiver(post_save, sender=SocialAccount)
+def create_profile(sender, instance, created, **kwargs):
+    print(sender)
+    print(instance.id)
+    print(instance)
+    print(instance.extra_data['login'])
+    print(instance.extra_data['url'])
+    print(instance.extra_data['name'])
+    print(instance.extra_data['email'])
+    try:
+        user = User.objects.get(username=instance)
+        print(user)
+    except User.DoesNotExist:
+        pass
+        # user = User.objects.create(username=instance, )
+    try:
+        cur_user = Account.objects.get(user_id=user.id)
+        print('ok')
+    except Account.DoesNotExist:
+        cur_user = Account.objects.create(user_id=user.id,
+                                          nickname_git=instance.extra_data['login'],
+                                          email=(instance.extra_data['email'], None),
+                                          url=instance.extra_data['url'])
+        print('create_new')
+    return cur_user
 
 def get_path_upload_avatar(instance, file):
     '''Постоение пути к файлуб format: (media)/avatar/user_id/photo.jpg'''
@@ -40,14 +70,6 @@ def get_email(cur_user):
     name = info.get('author').get('name')
     return email, name
 
-
-# def check_user_account(user):
-#     cur_user = Account.objects.get(user_id=user.id)
-#     return cur_user
-
-# def check_user(user):
-#     cur_user = User.objects.get(id=user.id)
-#     return cur_user
 
 class CharFilterInFilter(filters.BaseInFilter, filters.CharFilter):
     pass

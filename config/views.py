@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from rest_framework import viewsets, status
+from rest_framework.exceptions import APIException
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
@@ -12,7 +13,6 @@ from .services import check_repo, get_email, UseToolFilter
 # Create your views here.
 
 def title(request):
-    print(request.POST.get('email'))
     return render(request, 'config/title.html')
 
 
@@ -27,22 +27,13 @@ class CreateLink(viewsets.ModelViewSet):
         print('req', request.user.username)
         # user = check_user(request.user)
         try:
-            user = User.objects.get(id=request.user.id)
-            print(user)
-        except User.DoesNotExist:
-            email, name = get_email(request.user)
-            user = User.objects.create(email=email, username=name)
-            accaunt = Account.objects.create(user_id=user.id, nickname_git=name, email=email)
-            print(accaunt)
-        try:
-            cur_user = Account.objects.get(user_id=user.id)
+            cur_user = Account.objects.get(user_id=request.user.id)
             print('cur', cur_user)
         except Account.DoesNotExist:
             print('no')
             return render(request, 'config/title.html')
         if cur_user:
             serializer = self.get_serializer(data=request.data)
-            print(serializer)
             repo = check_repo(self.request, cur_user)
             print(repo)
             if repo:
@@ -51,7 +42,9 @@ class CreateLink(viewsets.ModelViewSet):
                 self.perform_create(serializer)
                 headers = self.get_success_headers(serializer.data)
                 return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
+            else:
+                # return Response({'error': 'Not found repo'}, status=status.HTTP_400_BAD_REQUEST)
+                return APIException(detail='Not found error', code=status.HTTP_400_BAD_REQUEST)
     def get_permissions(self):
         if self.action == 'list' or 'retrieve':
             permission_classes = [IsAuthenticatedOrReadOnly]

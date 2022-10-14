@@ -14,7 +14,7 @@ class UseToolsSerializers(serializers.ModelSerializer):
 
 class LinkCreateSerializers(serializers.ModelSerializer):
     '''Добавление ссылки'''
-    use_tool = UseToolsSerializers(read_only=True)
+    # use_tool = UseToolsSerializers()
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
