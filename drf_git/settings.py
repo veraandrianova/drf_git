@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django_filters',
-    # 'social_django',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -64,7 +63,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'drf_git.urls'
@@ -80,8 +78,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                # 'social_django.context_processors.backends',
-                # 'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -163,13 +159,9 @@ REST_FRAMEWORK = {
 }
 
 SITE_ID = 1
-# LOGIN_URL = 'login'
-# LOGOUT_URL = 'logout'
 ACCOUNT_EMAIL_VERIFICATION = "none"
 LOGIN_REDIRECT_URL = "links"
 ACCOUNT_LOGOUT_ON_GET = True
-# SOCIAL_AUTH_GITHUB_KEY = 'd484037246adc3bde936'
-# SOCIAL_AUTH_GITHUB_SECRET = 'f5d48a8874f60ca72af75300cda7612da5a50bc0'
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',

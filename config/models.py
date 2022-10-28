@@ -36,3 +36,12 @@ class SocialUserLink(models.Model):
 
     def __str__(self):
         return f'{self.user}'
+
+
+class Invitation(models.Model):
+    """ Модель заявок на вступление в команду"""
+    title = models.CharField('Название', max_length=150)
+    create_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.title} - {self.create_date}'

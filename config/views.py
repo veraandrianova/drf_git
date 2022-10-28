@@ -24,20 +24,14 @@ class CreateLink(viewsets.ModelViewSet):
     filterset_class = UseToolFilter
 
     def create(self, request, *args, **kwargs):
-        print('req', request.user.username)
-        # user = check_user(request.user)
         try:
             cur_user = Account.objects.get(user_id=request.user.id)
-            print('cur', cur_user)
         except Account.DoesNotExist:
-            print('no')
             return render(request, 'config/title.html')
         if cur_user:
             serializer = self.get_serializer(data=request.data)
             repo = check_repo(self.request, cur_user)
-            print(repo)
             if repo:
-                print('ok')
                 serializer.is_valid(raise_exception=True)
                 self.perform_create(serializer)
                 headers = self.get_success_headers(serializer.data)
@@ -51,14 +45,6 @@ class CreateLink(viewsets.ModelViewSet):
         else:
             permission_classes = [IsOwnerOrReadOnly]
         return [permission() for permission in permission_classes]
-
-    # def perform_create(self, serializer):
-    #     repo = check_repo(self.request)
-    #     if repo:
-    #         print('yes')
-    #         serializer.save()
-    #     else:
-    #         return Response(status=status.HTTP_404_NOT_FOUND)
 
     def perform_update(self, serializer):
         serializer.save()
