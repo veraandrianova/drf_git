@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
-from .models import SocialUserLink, UseTools, User, Account
-from .services import check_repo, get_email
+from .models import SocialUserLink, UseTools, User
 
 
 class UseToolsSerializers(serializers.ModelSerializer):

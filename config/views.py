@@ -7,7 +7,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import SocialUserLink, Account, User
 from .permissions import IsOwnerOrReadOnly
 from .serializer import LinkCreateSerializers, UserProfileSerializers
-from .services import check_repo, get_email, UseToolFilter
+from .services import check_repo, UseToolFilter
 
 
 # Create your views here.
@@ -37,7 +37,6 @@ class CreateLink(viewsets.ModelViewSet):
                 headers = self.get_success_headers(serializer.data)
                 return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
             else:
-                # return Response({'error': 'Not found repo'}, status=status.HTTP_400_BAD_REQUEST)
                 return APIException(detail='Not found error', code=status.HTTP_400_BAD_REQUEST)
     def get_permissions(self):
         if self.action == 'list' or 'retrieve':
